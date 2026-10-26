@@ -1,1221 +1,1047 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-  <!-- ============================================================
-       CONFIGURAZIONE: modifica questo oggetto.
-       Non inserire token, password o altre credenziali private.
-       ============================================================ -->
-  <script>
-    const CONFIG = {
-      username: "nox",
-      bio: [
-        "Creo cose quando il mondo dorme.",
-        "Design, codice e frequenze notturne.",
-        "Ci vediamo dall'altra parte dello schermo."
-      ],
-      location: "Milano, Italia",
-
-      // Vuoto = avatar originale SVG incorporato.
-      avatarUrl: "",
-
-      background: {
-        // "gradient", "image" oppure "video".
-        type: "gradient",
-        url: "",
-        overlay: 0.48 // Da 0 (trasparente) a 1 (nero).
-      },
-
-      // Usa un colore leggibile sullo sfondo scuro.
-      accent: "#a8ff78",
-
-      audio: {
-        // Sostituisci con un MP3 che hai il diritto di utilizzare.
-        // Vuoto = player disabilitato, senza errori.
-        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        title: "After hours",
-        volume: 0.25,
-        loop: true
-      },
-
-      badges: [
-        { text: "Night creator", icon: "✦" },
-        { text: "Design & code", icon: "⌘" }
-      ],
-
-      // Icone disponibili: discord, instagram, tiktok, youtube,
-      // github, x, spotify, twitch, link.
-      // Sostituisci questi URL dimostrativi con i tuoi profili.
-      socials: [
-        { nome: "Discord", url: "https://discord.com/", icona: "discord" },
-        { nome: "Instagram", url: "https://instagram.com/", icona: "instagram" },
-        { nome: "GitHub", url: "https://github.com/", icona: "github" },
-        { nome: "Spotify", url: "https://open.spotify.com/", icona: "spotify" }
-      ],
-
-      discord: {
-        // Opzionale: ID numerico, come stringa. L'utente deve essere
-        // monitorato da Lanyard: https://github.com/Phineas/lanyard
-        userId: "",
-        refreshMs: 30000
-      },
-
-      counter: {
-        // Servizio pubblico gratuito GET: https://counterapi.com
-        // Cambia namespace con un identificatore unico o il tuo dominio.
-        // Conta visualizzazioni, non visitatori unici certificati.
-        namespace: "nox-afterhours-bio-demo",
-        key: "profile",
-        endpoint: "https://counterapi.com/api",
-        fallback: "Visite non disponibili"
-      },
-
-      effects: {
-        entry: true,
-        particles: true,
-        // "stars", "snow" oppure "particles".
-        particleStyle: "stars",
-        particleCount: 55,
-        tilt: true,
-        customCursor: true,
-        cursorTrail: true,
-        typewriter: true,
-        animatedTitle: true,
-        animatedBackground: true,
-        animatedAvatar: true,
-        neonGlow: true,
-        hoverMotion: true,
-        audioPlayer: true,
-        discordWidget: true,
-        visitCounter: true
-      },
-
-      seo: {
-        title: "nox — After hours",
-        description: "Design, codice e frequenze notturne. Tutti i miei link, in un solo posto.",
-        // Per gli scraper social, aggiorna ANCHE i meta tag statici qui sotto.
-        image: "",
-        url: ""
-      }
-    };
-  </script>
-
-  <!-- Gli scraper Open Graph spesso non eseguono JavaScript:
-       personalizza anche questi valori statici prima di pubblicare. -->
-  <title>nox — After hours</title>
-  <meta name="description" content="Design, codice e frequenze notturne. Tutti i miei link, in un solo posto.">
-  <meta name="theme-color" content="#090d0b">
-  <meta property="og:type" content="profile">
-  <meta property="og:locale" content="it_IT">
-  <meta property="og:title" content="nox — After hours">
-  <meta property="og:description" content="Il mio piccolo angolo di internet, dopo mezzanotte.">
-  <meta property="og:image" content="">
-  <meta property="og:url" content="">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <style>
-    :root {
-      color-scheme: dark;
-      --accent: #a8ff78;
-      --ink: #f3f7f1;
-      --muted: #b2bdb2;
-      --overlay: .48;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    [hidden] { display: none !important; }
-
-    html { min-height: 100%; background: #090d0b; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      min-height: 100svh;
-      color: var(--ink);
-      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
-    }
-
-    button, input, a { touch-action: manipulation; }
-    button, input { font: inherit; }
-    button, a { -webkit-user-select: none; user-select: none; }
-    button { color: inherit; }
-    a { color: inherit; text-decoration: none; }
-
-    :focus-visible {
-      outline: 3px solid var(--accent);
-      outline-offset: 5px;
-    }
-
-    button:disabled { cursor: not-allowed; opacity: .5; }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* Sfondo originale: una luce verde attraverso una stanza notturna. */
-    .background, .scrim, #particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .background { z-index: -3; overflow: hidden; background: #090d0b; }
-
-    .ambient {
-      position: absolute;
-      inset: -20%;
-      background:
-        radial-gradient(ellipse at 25% 25%, #315b36 0, transparent 44%),
-        radial-gradient(ellipse at 85% 78%, #143a37 0, transparent 45%),
-        linear-gradient(145deg, #0a100e 12%, #111e17 52%, #050907);
-      transform: rotate(-8deg) scale(1.1);
-    }
-
-    .background::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: .08;
-      background: repeating-linear-gradient(
-        0deg, transparent 0 3px, #d8ffe0 3px 4px
-      );
-    }
-
-    .background img, .background video {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .scrim { z-index: -2; background: rgb(0 0 0 / var(--overlay)); }
-    #particles { z-index: -1; width: 100%; height: 100%; }
-
-    body.motion-background .ambient {
-      animation: atmosphere 24s ease-in-out infinite alternate;
-    }
-
-    @keyframes atmosphere {
-      to { transform: rotate(8deg) scale(1.22) translate(3%, -2%); }
-    }
-
-    .page {
-      min-height: 100vh;
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
-      padding: max(32px, env(safe-area-inset-top))
-        max(20px, env(safe-area-inset-right))
-        max(32px, env(safe-area-inset-bottom))
-        max(20px, env(safe-area-inset-left));
-      perspective: 1100px;
-    }
-
-    .profile {
-      width: min(100%, 490px);
-      padding: 30px;
-      background: rgb(15 22 18 / .78);
-      border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
-      border-radius: 28px;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-      transition: transform .18s ease-out, opacity .65s ease;
-      position: relative;
-    }
-
-    body.glow .profile {
-      box-shadow:
-        0 0 0 6px rgb(255 255 255 / .015),
-        0 0 65px color-mix(in srgb, var(--accent) 9%, transparent),
-        0 26px 90px rgb(0 0 0 / .4);
-    }
-
-    body.waiting .profile { opacity: 0; }
-    .brand-row, .identity, .player-top, .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand-row { margin-bottom: 30px; color: var(--muted); font-size: 13px; }
-    .brand { display: inline-flex; align-items: center; gap: 8px; }
-    .logo { width: 24px; height: 24px; color: var(--accent); }
-    .brand-word { font-weight: 650; letter-spacing: -.035em; font-size: 17px; }
-
-    .signal { display: flex; align-items: center; gap: 6px; }
-    .signal i { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
-
-    .identity { justify-content: flex-start; gap: 20px; }
-    .avatar-ring {
-      position: relative;
-      flex: 0 0 88px;
-      width: 88px;
-      height: 88px;
-      display: grid;
-      place-items: center;
-      isolation: isolate;
-    }
-
-    .avatar-ring::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: 50%;
-      background: conic-gradient(from 0deg, transparent, var(--accent), transparent 75%);
-    }
-
-    body.motion-avatar .avatar-ring::before { animation: orbit 7s linear infinite; }
-    @keyframes orbit { to { transform: rotate(360deg); } }
-
-    .avatar-ring img {
-      width: 80px;
-      height: 80px;
-      border: 4px solid #101812;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #132018;
-    }
-
-    .identity-copy { min-width: 0; }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(36px, 9vw, 49px);
-      letter-spacing: -.065em;
-      line-height: 1.05;
-      overflow-wrap: anywhere;
-    }
-
-    .location {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      color: var(--muted);
-      font-size: 13px;
-      margin: 9px 0 0;
-      overflow-wrap: anywhere;
-    }
-
-    .icon { width: 20px; height: 20px; flex-shrink: 0; }
-    .location .icon { width: 15px; height: 15px; }
-
-    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 23px 0 0; }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      font-size: 12px;
-      border-radius: 8px;
-      color: #dfebdc;
-      background: rgb(255 255 255 / .055);
-      overflow-wrap: anywhere;
-      max-width: 100%;
-    }
-
-    .badge span:first-child { color: var(--accent); }
-
-    .bio {
-      min-height: 3.2em;
-      margin: 19px 0 25px;
-      color: #d2dbd0;
-      font-size: 16px;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .caret {
-      display: inline-block;
-      width: 2px;
-      height: 1em;
-      margin-left: 4px;
-      background: var(--accent);
-      vertical-align: -.1em;
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .socials { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .social {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-height: 52px;
-      padding: 13px 15px;
-      border-radius: 13px;
-      background: rgb(255 255 255 / .055);
-      transition: background .2s, color .2s, transform .2s;
-      font-size: 14px;
-      font-weight: 550;
-    }
-
-    .social-name { overflow-wrap: anywhere; min-width: 0; }
-    .social .arrow { margin-left: auto; opacity: .5; flex-shrink: 0; }
-
-    .discord {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      margin-top: 18px;
-      padding: 14px;
-      background: rgb(255 255 255 / .035);
-      border-radius: 13px;
-    }
-
-    .discord-avatar { width: 38px; height: 38px; object-fit: cover; border-radius: 12px; }
-    .discord-copy { min-width: 0; flex: 1; }
-    .discord-name { margin: 0 0 3px; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
-    .discord-activity { margin: 0; font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #89918b; flex-shrink: 0; }
-
-    .player { margin-top: 25px; }
-    .player-top { gap: 10px; }
-
-    .play {
-      flex: 0 0 42px;
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      background: var(--accent);
-      color: #0a1607;
-      border: 0;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .track { min-width: 0; flex: 1; }
-    .track-label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-    .track-title { display: block; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
-    .volume { display: flex; align-items: center; gap: 6px; }
-    .volume .icon { width: 16px; height: 16px; color: var(--muted); }
-
-    input[type="range"] {
-      accent-color: var(--accent);
-      cursor: pointer;
-      min-height: 32px;
-      margin: 0;
-      max-width: 100%;
-    }
-
-    #volume { width: 65px; }
-    #progress { display: block; width: 100%; margin-top: 9px; }
-    .time { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
-
-    .card-footer { margin-top: 24px; color: var(--muted); font-size: 11px; }
-    .visits { display: inline-flex; align-items: center; gap: 6px; }
-    .visits .icon { width: 15px; height: 15px; }
-    .footer-note { margin-left: auto; text-align: right; }
-
-    /* Il pulsante d'ingresso è accessibile anche con Invio e Spazio. */
-    .entry {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      background: rgb(5 10 7 / .5);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      cursor: pointer;
-      transition: opacity .6s ease, visibility .6s;
-    }
-
-    .entry .logo { width: 65px; height: 65px; margin-bottom: 13px; }
-    .entry-title { font-size: clamp(30px, 8vw, 48px); letter-spacing: -.055em; font-weight: 650; }
-    .entry-hint { color: #c4cec1; font-size: 13px; }
-    .entry.leaving { opacity: 0; visibility: hidden; pointer-events: none; }
-
-    #cursor, #cursor-trail {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 50;
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0;
-    }
-
-    #cursor { width: 7px; height: 7px; background: var(--accent); }
-    #cursor-trail { width: 29px; height: 29px; border: 1px solid var(--accent); opacity: 0; }
-
-    @media (hover: hover) and (pointer: fine) {
-      body.cursor-on, body.cursor-on a, body.cursor-on button { cursor: none; }
-      body.hover-motion .social:hover {
-        transform: translateY(-3px);
-        background: color-mix(in srgb, var(--accent) 15%, #151e17);
-        color: var(--accent);
-      }
-    }
-
-    @media (max-width: 420px) {
-      .profile { padding: 24px 20px; border-radius: 23px; }
-      .brand-row { margin-bottom: 26px; }
-      .identity { gap: 15px; }
-      .social { padding: 12px; gap: 8px; }
-      .volume { gap: 4px; }
-      #volume { width: 52px; }
-    }
-
-    @media (max-width: 330px) {
-      .socials { grid-template-columns: 1fr; }
-      .player-top { flex-wrap: wrap; }
-      .volume { margin-left: auto; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
-      }
-      .profile { transform: none !important; }
-      #particles, #cursor, #cursor-trail, .caret { display: none !important; }
-      body.cursor-on, body.cursor-on a, body.cursor-on button { cursor: auto; }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Libreria SVG inline: nessun font o pacchetto di icone esterno. -->
-  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"
-       style="position:absolute" aria-hidden="true">
-    <defs>
-      <symbol id="i-logo" viewBox="0 0 32 32">
-        <path d="M6 25V7l20 18V7M6 16h20" fill="none" stroke="currentColor"
-              stroke-width="2.5" stroke-linejoin="round"/>
-        <path d="m16 1 2 4-2 4-2-4Z" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-link" viewBox="0 0 24 24">
-        <path d="m10 13 4-4m-6 6-2 2a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m2 3 2-2a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0"
-              transform="translate(1 0)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </symbol>
-      <symbol id="i-discord" viewBox="0 0 24 24">
-        <path d="M7 5 4 6C2 10 1 14 2 18l5 2 1-2m9-13 3 1c2 4 3 8 2 12l-5 2-1-2M7 6c3-1 7-1 10 0M6 16c4 2 8 2 12 0"
-              fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        <ellipse cx="8" cy="12" rx="1.5" ry="2" fill="currentColor"/>
-        <ellipse cx="16" cy="12" rx="1.5" ry="2" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-instagram" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-tiktok" viewBox="0 0 24 24">
-        <path d="M14 3v12a5 5 0 1 1-4-4.9V14a2 2 0 1 0 1 1V3h3c1 3 3 5 6 5v3c-2 0-4-1-6-2"
-              fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-      </symbol>
-      <symbol id="i-youtube" viewBox="0 0 24 24">
-        <rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <path d="m10 9 6 3-6 3Z" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-github" viewBox="0 0 24 24">
-        <path d="M9 21v-4c-4 1-4-2-6-3m12 7v-4c0-1-.2-2-1-2 4-.5 6-2 6-6 0-1-.4-2-1-3 0-1 0-2-.5-3-2 0-3 1-3 1a12 12 0 0 0-7 0S7 3 5 3c-.5 1-.5 2-.5 3C4 7 4 8 4 9c0 4 2 5.5 6 6-.8.5-1 1-1 2"
-              fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-      </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
-        <path d="M4 3h4l12 18h-4ZM20 3 4 21" fill="none" stroke="currentColor" stroke-width="1.8"/>
-      </symbol>
-      <symbol id="i-spotify" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <path d="M6 9c4-1 8-1 12 1M7 12c3-1 6-1 10 1M8 15c3-.6 5-.4 8 1"
-              fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </symbol>
-      <symbol id="i-twitch" viewBox="0 0 24 24">
-        <path d="M4 3h18v13l-6 5h-5l-3 3v-3H4Zm4 0v14h4v3l3-3h3l4-4M12 7v6m5-6v6"
-              transform="translate(0 -1)" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-      </symbol>
-      <symbol id="i-pin" viewBox="0 0 24 24">
-        <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
-      </symbol>
-      <symbol id="i-eye" viewBox="0 0 24 24">
-        <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
-      </symbol>
-      <symbol id="i-play" viewBox="0 0 24 24">
-        <path d="m8 5 11 7-11 7Z" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-pause" viewBox="0 0 24 24">
-        <path d="M7 5h4v14H7zm6 0h4v14h-4z" fill="currentColor"/>
-      </symbol>
-      <symbol id="i-volume" viewBox="0 0 24 24">
-        <path d="M4 9h4l5-4v14l-5-4H4Zm13-1c2 2 2 6 0 8m3-11c4 4 4 10 0 14"
-              fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </symbol>
-    </defs>
-  </svg>
-
-  <div class="background" id="background" aria-hidden="true">
-    <div class="ambient"></div>
-  </div>
-  <div class="scrim" aria-hidden="true"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
-
-  <main class="page" id="main">
-    <article class="profile" id="profile" aria-labelledby="username" tabindex="-1">
-      <header class="brand-row">
-        <span class="brand">
-          <svg class="logo" aria-hidden="true"><use href="#i-logo"></use></svg>
-          <span class="brand-word">afterhours</span>
-        </span>
-        <span class="signal"><i aria-hidden="true"></i> personal space</span>
-      </header>
-
-      <div class="identity">
-        <div class="avatar-ring">
-          <img id="avatar" width="80" height="80" alt="Avatar di nox">
-        </div>
-        <div class="identity-copy">
-          <h1 id="username">nox</h1>
-          <p class="location" id="location-row">
-            <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
-            <span id="location"></span>
-          </p>
-        </div>
-      </div>
-
-      <div class="badges" id="badges" aria-label="Badge personali"></div>
-
-      <p class="bio">
-        <!-- L'animazione non viene annunciata lettera per lettera. -->
-        <span id="bio-visual" aria-hidden="true"></span>
-        <span class="caret" id="caret" aria-hidden="true"></span>
-        <span id="bio-accessible" class="sr-only"></span>
-      </p>
-
-      <nav class="socials" id="socials" aria-label="Profili social"></nav>
-
-      <section class="discord" id="discord" aria-label="Presenza Discord" hidden>
-        <img class="discord-avatar" id="discord-avatar" width="38" height="38" alt="Avatar Discord">
-        <div class="discord-copy">
-          <p class="discord-name" id="discord-name"></p>
-          <p class="discord-activity" id="discord-activity"></p>
-        </div>
-        <span class="status-dot" id="discord-dot" aria-hidden="true"></span>
-      </section>
-
-      <section class="player" id="player" aria-label="Player musicale">
-        <div class="player-top">
-          <button class="play" id="play" type="button" aria-label="Riproduci musica" aria-pressed="false">
-            <svg class="icon" aria-hidden="true"><use id="play-icon" href="#i-play"></use></svg>
-          </button>
-          <div class="track">
-            <span class="track-label" id="audio-status">Colonna sonora</span>
-            <span class="track-title" id="track-title"></span>
-          </div>
-          <div class="volume">
-            <svg class="icon" aria-hidden="true"><use href="#i-volume"></use></svg>
-            <label for="volume" class="sr-only">Volume</label>
-            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.25">
-          </div>
-        </div>
-        <label for="progress" class="sr-only">Posizione nella traccia</label>
-        <input id="progress" type="range" min="0" max="100" step="0.1" value="0" disabled>
-        <div class="time" aria-hidden="true">
-          <span id="elapsed">0:00</span>
-          <span id="duration">--:--</span>
-        </div>
-        <span class="sr-only" id="audio-message" role="status"></span>
-      </section>
-
-      <footer class="card-footer">
-        <span class="visits" id="visits">
-          <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
-          <span id="visit-count">Visite · —</span>
-        </span>
-        <span class="footer-note">a little less ordinary.</span>
-      </footer>
-    </article>
-  </main>
-
-  <button class="entry" id="entry" type="button" aria-label="Entra nel profilo e avvia la musica">
-    <svg class="logo" aria-hidden="true"><use href="#i-logo"></use></svg>
-    <span class="entry-title">Click to enter</span>
-    <span class="entry-hint" id="entry-hint">Un piccolo spazio. Le mie frequenze.</span>
-  </button>
-
-  <audio id="audio" preload="none"></audio>
-  <div id="cursor" aria-hidden="true"></div>
-  <div id="cursor-trail" aria-hidden="true"></div>
-
-  <noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAQLIV Profile</title>
     <style>
-      #entry, .player, .visits, .caret { display: none !important; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        
+        .custom-cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: url('assets/custom_cursor.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        
+        body:not(.touch-device) {
+            cursor: none;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #hacker-overlay, #snow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        
+        .controls {
+            position: fixed;
+            bottom: calc(50% - 240px - 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .theme-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .theme-button:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            color: white;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 80px;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+
+        
+        .transparency-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .transparency-icon {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        
+        .top-controls {
+            position: fixed;
+            bottom: calc(50% - 240px - 60px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        
+        #profile-block {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 820px;
+            min-height: 332px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease-out;
+            pointer-events: auto;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .profile-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .profile-container::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle at 10px 10px,
+                var(--primary-color, #00CED1) 10%,
+                transparent 15%
+            );
+            animation: orbit 3s linear infinite;
+            z-index: -1;
+            filter: blur(1px);
+            box-shadow: none;
+        }
+
+        .profile-container.fast-orbit::after {
+            animation: fast-orbit 0.5s linear forwards;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .profile-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name-and-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        
+        @font-face {
+            font-family: 'Angel Wish';
+            src: url('assets/Angel_wish.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        #profile-name {
+            font-family: 'Angel Wish', sans-serif;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #fff;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+            opacity: 1 !important;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .badge-container {
+            position: relative;
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .badge-container .tooltip {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .badge-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1 !important;
+        }
+
+        .badge-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .badge-box-inner {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            gap: 8px;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .badge {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.3s;
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .badge:hover {
+            transform: scale(1.2);
+        }
+
+        #profile-bio {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            opacity: 1 !important;
+        }
+
+        .bio-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+            opacity: 1 !important;
+        }
+
+        .profile-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .visitor-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            align-self: flex-start;
+            position: relative;
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .visitor-icon {
+            width: 18px;
+            height: 18px;
+            color: white;
+            opacity: 1 !important;
+        }
+
+        .visitor-counter .tooltip {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 100;
+            top: -35px;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .visitor-counter:hover .tooltip {
+            visibility: visible;
+            opacity: 1 !important;
+        }
+
+        #visitor-count {
+            opacity: 1 !important;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 0;
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+            pointer-events: auto;
+            opacity: 1 !important;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.4) rotateY(15deg);
+        }
+
+        
+        #skills-block {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 820px;
+            min-height: 332px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease-out;
+        }
+
+        .skills-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .skill {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 8px;
+        }
+
+        .skill-bar-container {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-bar {
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 2s;
+        }
+
+        #python-bar {
+            background: linear-gradient(90deg, #ff6b6b, #ff9f9f);
+        }
+
+        #cpp-bar {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+
+        #csharp-bar {
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
+        }
+
+        
+        #results-button-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+
+        #results-theme {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+
+        #results-theme:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        #results-hint {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            width: 180px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 25;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #results-hint::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+        }
+
+        
+        .home-theme #profile-block,
+        .home-theme #skills-block {
+            border-color: rgba(0, 195, 255, 0.5);
+        }
+
+        .hacker-theme #profile-block,
+        .hacker-theme #skills-block {
+            border-color: rgba(0, 255, 0, 0.5);
+        }
+
+        .rain-theme #profile-block,
+        .rain-theme #skills-block {
+            border-color: rgba(100, 149, 237, 0.5);
+        }
+
+        .anime-theme #profile-block,
+        .anime-theme #skills-block {
+            border-color: rgba(255, 0, 255, 0.5);
+        }
+
+        .car-theme #profile-block,
+        .car-theme #skills-block {
+            border-color: rgba(255, 165, 0, 0.5);
+        }
+
+        
+        .glitch {
+            animation: glitch 0.2s ease-in-out;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fast-orbit {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        
+        .cursor-trail {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor-trail-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+
+        
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            cursor: pointer;
+        }
+
+        #start-text {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+        }
+
+        
+        @media (max-width: 430px) {
+            
+            #profile-block, #skills-block {
+                width: 90vw;
+                max-width: 350px;
+                min-height: 280px;
+                padding: 15px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .profile-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-picture {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-info {
+                align-items: center;
+                text-align: center;
+            }
+
+            .name-and-badges {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            #profile-name {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+
+            .badge-group {
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .badge {
+                width: 18px;
+                height: 18px;
+            }
+
+            .badge-container .tooltip {
+                width: 100px;
+                font-size: 12px;
+                margin-left: -50px;
+                bottom: 110%;
+            }
+
+            #profile-bio {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .bio-separator {
+                margin: 15px 0;
+            }
+
+            .social-links {
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .social-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .visitor-counter {
+                font-size: 12px;
+                padding: 6px 12px;
+                align-self: center;
+            }
+
+            .visitor-icon {
+                width: 16px;
+                height: 16px;
+            }
+
+            .visitor-counter .tooltip {
+                width: 100px;
+                font-size: 12px;
+                margin-left: -50px;
+                top: -30px;
+            }
+
+            .skills-title {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .skill-icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .skill-name span {
+                font-size: 14px;
+            }
+
+            
+            .controls {
+                bottom: 20px;
+                gap: 8px;
+                padding: 5px 8px;
+            }
+
+            .theme-button {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            
+            .top-controls {
+                bottom: 70px;
+                gap: 10px;
+                padding: 6px 10px;
+            }
+
+            .volume-control, .transparency-control {
+                gap: 6px;
+            }
+
+            .volume-icon, .transparency-icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .slider {
+                width: 60px;
+                height: 4px;
+            }
+
+            .slider::-webkit-slider-thumb {
+                width: 10px;
+                height: 10px;
+            }
+
+            
+            #results-button-container {
+                top: 10px;
+            }
+
+            #results-theme {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            #results-hint {
+                width: 150px;
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+
+            
+            #start-text {
+                font-size: 18px;
+                padding: 0 20px;
+            }
+        }
     </style>
-    <p style="padding:20px;text-align:center">
-      Attiva JavaScript per caricare il profilo personalizzato e i suoi link.
-    </p>
-  </noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Retro+Gaming&display=swap" rel="stylesheet">
+</head>
+<body class="home-theme" onload="initMedia()">
+    
+    <div class="custom-cursor"></div>
+
+    
+    <div id="start-screen">
+        <div id="start-text"></div>
+    </div>
+
+    <div class="container">
+        
+        <video id="background" autoplay loop muted playsinline webkit-playsinline>
+            <source src="assets/background.mp4" type="video/mp4">
+        </video>
+
+        
+        <div class="glitch-overlay"></div>
+        <div id="hacker-overlay" class="hidden">
+            
+        </div>
+        <div id="snow-overlay" class="hidden">
+            
+        </div>
+
+
+        <div id="profile-block">
+            <div class="profile-header">
+                <div class="profile-container">
+                    <img src="assets/profile.gif" alt="Profile" class="profile-picture">
+                </div>
+                <div class="profile-info">
+                    <div class="name-and-badges">
+                        <div id="profile-name">JAQLIV</div>
+                        <div class="badge-box">
+                            <div class="badge-box-inner">
+                                <div class="badge-group">
+                                    <div class="badge-container">
+                                        <img src="assets/staff.gif" alt="Staff" class="badge">
+                                        <span class="tooltip">Staff Member</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/owner.gif" alt="Owner" class="badge">
+                                        <span class="tooltip">Owner</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/partner.gif" alt="Partner" class="badge">
+                                        <span class="tooltip">Partner</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/developer.png" alt="Developer" class="badge">
+                                        <span class="tooltip">Developer</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/bug_bounty.gif" alt="Bug Bounty" class="badge">
+                                        <span class="tooltip">Bug Bounty</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/hated_guns.gif" alt="Hated by Guns.lol" class="badge">
+                                        <span class="tooltip">Hated by Guns.lol</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/hated_fakecrime.gif" alt="Hated by Fakecrime.bio" class="badge">
+                                        <span class="tooltip">Hated by Fakecrime.bio</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/verified.gif" alt="Verified" class="badge">
+                                        <span class="tooltip">Verified</span>
+                                    </div>
+                                    <div class="badge-container">
+                                        <img src="assets/rule_maker.gif" alt="Rule Maker" class="badge">
+                                        <span class="tooltip">Rule Maker</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="profile-bio"></div>
+                </div>
+            </div>
+
+            <div class="bio-separator"></div>
+
+            <div class="profile-footer">
+
+                <div class="social-links">
+                    <a href="https://discord.gg/motiongoats" target="_blank">
+                        <img src="assets/discord.png" alt="Discord" class="social-icon">
+                    </a>
+                    <a href="https://github.com/JAQLIV" target="_blank">
+                        <img src="assets/github.png" alt="GitHub" class="social-icon">
+                    </a>
+                    <a href="https://www.youtube.com/@jaqliv" target="_blank">
+                        <img src="assets/youtube.png" alt="YouTube" class="social-icon">
+                    </a>
+                    <a href="https://www.tiktok.com/@jaqliv" target="_blank">
+                        <img src="assets/tiktok.png" alt="TikTok" class="social-icon">
+                    </a>
+                </div>
+
 
-  <script>
-    "use strict";
-
-    const $ = id => document.getElementById(id);
-    const fx = CONFIG.effects;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
-    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-    const accent = CSS.supports("color", CONFIG.accent) ? CONFIG.accent : "#a8ff78";
-
-    document.documentElement.style.setProperty("--accent", accent);
-    document.documentElement.style.setProperty(
-      "--overlay", clamp(Number(CONFIG.background.overlay) || 0, 0, 1)
-    );
-
-    document.body.classList.toggle("motion-background", fx.animatedBackground);
-    document.body.classList.toggle("motion-avatar", fx.animatedAvatar);
-    document.body.classList.toggle("glow", fx.neonGlow);
-    document.body.classList.toggle("hover-motion", fx.hoverMotion);
-
-    // Tutti i dati personalizzati vengono inseriti come testo, mai come HTML.
-    $("username").textContent = CONFIG.username;
-    $("location").textContent = CONFIG.location;
-    $("location-row").hidden = !CONFIG.location;
-    $("track-title").textContent = CONFIG.audio.title;
-
-    const defaultTitle = CONFIG.seo.title || CONFIG.username;
-    document.title = defaultTitle;
-
-    function setMeta(selector, value) {
-      if (value) document.querySelector(selector)?.setAttribute("content", value);
-    }
-
-    setMeta('meta[name="description"]', CONFIG.seo.description);
-    setMeta('meta[property="og:title"]', defaultTitle);
-    setMeta('meta[property="og:description"]', CONFIG.seo.description);
-    setMeta('meta[property="og:image"]', CONFIG.seo.image);
-    setMeta('meta[property="og:url"]', CONFIG.seo.url);
-
-    // Avatar originale incorporato: resta disponibile anche senza rete.
-    const avatarSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
-      <rect width="160" height="160" rx="80" fill="#142219"/>
-      <circle cx="80" cy="80" r="58" fill="#1e3526"/>
-      <path d="M47 111V49l66 62V49M47 80h66" fill="none"
-        stroke="${accent.replace(/[^#a-zA-Z0-9(),.%\s-]/g, "")}"
-        stroke-width="8" stroke-linejoin="round"/>
-      <circle cx="123" cy="34" r="5" fill="#e8ffdf"/>
-    </svg>`;
-    const fallbackAvatar = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(avatarSVG);
-
-    function loadImage(element, url, fallback) {
-      element.onerror = () => {
-        element.onerror = null;
-        element.src = fallback;
-      };
-      element.src = url || fallback;
-    }
-
-    $("avatar").alt = `Avatar di ${CONFIG.username}`;
-    loadImage($("avatar"), CONFIG.avatarUrl, fallbackAvatar);
-
-    function icon(name) {
-      const allowed = new Set([
-        "discord", "instagram", "tiktok", "youtube",
-        "github", "x", "spotify", "twitch", "link"
-      ]);
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.classList.add("icon");
-      svg.setAttribute("aria-hidden", "true");
-      const use = document.createElementNS(svg.namespaceURI, "use");
-      use.setAttribute("href", `#i-${allowed.has(name) ? name : "link"}`);
-      svg.append(use);
-      return svg;
-    }
-
-    for (const item of CONFIG.badges) {
-      const badge = document.createElement("span");
-      badge.className = "badge";
-      const glyph = document.createElement("span");
-      glyph.textContent = item.icon || "✦";
-      glyph.setAttribute("aria-hidden", "true");
-      const text = document.createElement("span");
-      text.textContent = item.text;
-      badge.append(glyph, text);
-      $("badges").append(badge);
-    }
-    $("badges").hidden = !CONFIG.badges.length;
-
-    for (const item of CONFIG.socials) {
-      let url;
-      try {
-        url = new URL(item.url);
-        if (!["https:", "http:"].includes(url.protocol)) continue;
-      } catch {
-        continue;
-      }
-
-      const link = document.createElement("a");
-      link.className = "social";
-      link.href = url.href;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.setAttribute("aria-label", `${item.nome}, apre una nuova scheda`);
-
-      const name = document.createElement("span");
-      name.className = "social-name";
-      name.textContent = item.nome;
-
-      const arrow = document.createElement("span");
-      arrow.className = "arrow";
-      arrow.textContent = "↗";
-      arrow.setAttribute("aria-hidden", "true");
-
-      link.append(icon(item.icona), name, arrow);
-      $("socials").append(link);
-    }
-
-    // Media di sfondo: il gradiente resta come fallback.
-    let backgroundVideo = null;
-
-    if (CONFIG.background.url && CONFIG.background.type === "image") {
-      const image = new Image();
-      image.alt = "";
-      image.decoding = "async";
-      image.onload = () => $("background").append(image);
-      image.src = CONFIG.background.url;
-    }
-
-    if (CONFIG.background.url && CONFIG.background.type === "video") {
-      backgroundVideo = document.createElement("video");
-      backgroundVideo.muted = true;
-      backgroundVideo.defaultMuted = true;
-      backgroundVideo.loop = true;
-      backgroundVideo.playsInline = true;
-      backgroundVideo.preload = "metadata";
-      backgroundVideo.setAttribute("aria-hidden", "true");
-      backgroundVideo.addEventListener("error", () => backgroundVideo.hidden = true);
-      backgroundVideo.src = CONFIG.background.url;
-      $("background").append(backgroundVideo);
-    }
-
-    function syncBackgroundVideo() {
-      if (!backgroundVideo) return;
-      if (reduced.matches || document.hidden) {
-        backgroundVideo.pause();
-      } else {
-        backgroundVideo.play().catch(() => {});
-      }
-    }
-
-    // Typewriter: una sola catena di timeout, interrotta in background.
-    const phrases = (Array.isArray(CONFIG.bio) ? CONFIG.bio : [CONFIG.bio])
-      .map(String).filter(Boolean);
-    const lines = phrases.length ? phrases : [""];
-    $("bio-accessible").textContent = lines.join(" ");
-
-    let typingTimer, phraseIndex = 0, letterIndex = 0, deleting = false;
-
-    function typeStep() {
-      const letters = Array.from(lines[phraseIndex]);
-      letterIndex += deleting ? -1 : 1;
-      $("bio-visual").textContent = letters.slice(0, Math.max(0, letterIndex)).join("");
-
-      let delay = deleting ? 32 : 65;
-      if (!deleting && letterIndex >= letters.length) {
-        deleting = true;
-        delay = 2100;
-      } else if (deleting && letterIndex <= 0) {
-        deleting = false;
-        phraseIndex = (phraseIndex + 1) % lines.length;
-        delay = 350;
-      }
-      typingTimer = setTimeout(typeStep, delay);
-    }
-
-    function syncTyping() {
-      clearTimeout(typingTimer);
-      const animate = fx.typewriter && !reduced.matches && lines.some(Boolean);
-      $("caret").hidden = !animate;
-
-      if (!animate) {
-        $("bio-visual").textContent = lines[0];
-      } else if (!document.hidden) {
-        typingTimer = setTimeout(typeStep, 100);
-      }
-    }
-
-    // Audio: play() viene chiamato direttamente nel gesto dell'utente.
-    const audio = $("audio");
-    const hasAudio = Boolean(CONFIG.audio.url && fx.audioPlayer);
-    let audioBusy = false;
-
-    $("player").hidden = !fx.audioPlayer;
-    audio.loop = Boolean(CONFIG.audio.loop);
-    audio.volume = clamp(Number(CONFIG.audio.volume) || 0, 0, 1);
-    $("volume").value = audio.volume;
-
-    if (hasAudio) audio.src = CONFIG.audio.url;
-    else {
-      $("play").disabled = true;
-      $("volume").disabled = true;
-      $("audio-status").textContent = "Nessuna traccia configurata";
-      $("entry").setAttribute("aria-label", "Entra nel profilo");
-    }
-
-    function audioFeedback(message) {
-      $("audio-status").textContent = message;
-      $("audio-message").textContent = message;
-    }
-
-    async function startAudio() {
-      if (!hasAudio || audioBusy) return;
-      audioBusy = true;
-      try {
-        await audio.play();
-      } catch {
-        audioFeedback("Audio non disponibile: riprova con Play");
-      } finally {
-        audioBusy = false;
-      }
-    }
-
-    function syncPlayButton() {
-      const playing = !audio.paused && !audio.ended;
-      $("play-icon").setAttribute("href", playing ? "#i-pause" : "#i-play");
-      $("play").setAttribute("aria-label", playing ? "Metti in pausa" : "Riproduci musica");
-      $("play").setAttribute("aria-pressed", String(playing));
-      if (playing) $("audio-status").textContent = "In riproduzione";
-      else if (hasAudio && !audio.error) $("audio-status").textContent = "In pausa";
-    }
-
-    $("play").addEventListener("click", () => {
-      if (audio.paused) startAudio();
-      else audio.pause();
-    });
-
-    $("volume").addEventListener("input", event => {
-      audio.volume = Number(event.target.value);
-    });
-
-    for (const event of ["play", "pause", "ended"]) {
-      audio.addEventListener(event, syncPlayButton);
-    }
-
-    audio.addEventListener("error", () => {
-      audioFeedback("Traccia non raggiungibile");
-      $("progress").disabled = true;
-    });
-
-    function timeLabel(seconds) {
-      if (!Number.isFinite(seconds)) return "--:--";
-      const value = Math.max(0, Math.floor(seconds));
-      return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
-    }
-
-    function syncProgress() {
-      const usable = Number.isFinite(audio.duration) && audio.duration > 0;
-      $("progress").disabled = !usable;
-      $("progress").value = usable ? audio.currentTime / audio.duration * 100 : 0;
-      $("progress").setAttribute(
-        "aria-valuetext",
-        `${timeLabel(audio.currentTime)} di ${timeLabel(audio.duration)}`
-      );
-      $("elapsed").textContent = timeLabel(audio.currentTime);
-      $("duration").textContent = timeLabel(audio.duration);
-    }
-
-    for (const event of ["timeupdate", "loadedmetadata", "durationchange", "emptied"]) {
-      audio.addEventListener(event, syncProgress);
-    }
-
-    $("progress").addEventListener("input", event => {
-      if (Number.isFinite(audio.duration) && audio.duration > 0) {
-        audio.currentTime = Number(event.target.value) / 100 * audio.duration;
-      }
-    });
-
-    let entered = !fx.entry;
-
-    function enter() {
-      if (entered) return;
-      entered = true;
-      startAudio();
-      syncBackgroundVideo();
-      $("main").inert = false;
-      document.body.classList.remove("waiting");
-      $("entry").classList.add("leaving");
-      $("profile").focus({ preventScroll: true });
-      setTimeout(() => $("entry").hidden = true, reduced.matches ? 0 : 650);
-    }
-
-    if (fx.entry) {
-      document.body.classList.add("waiting");
-      $("main").inert = true;
-      $("entry").addEventListener("click", enter, { once: true });
-    } else {
-      $("entry").hidden = true;
-      // Senza schermata d'ingresso, l'audio parte dal pulsante Play.
-    }
-
-    // Fetch con timeout e fallback silenzioso.
-    async function getJSON(url, timeout = 6500) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeout);
-      try {
-        const response = await fetch(url, {
-          signal: controller.signal,
-          cache: "no-store",
-          credentials: "omit"
-        });
-        if (!response.ok) throw new Error("Servizio non disponibile");
-        return await response.json();
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-
-    // Lanyard REST: nessun token richiesto e nessun dato inventato.
-    const discordEnabled = fx.discordWidget && /^\d{17,20}$/.test(CONFIG.discord.userId);
-    let discordTimer = null;
-    let discordBusy = false;
-
-    async function refreshDiscord() {
-      if (!discordEnabled || discordBusy || document.hidden) return;
-      discordBusy = true;
-
-      try {
-        const result = await getJSON(
-          `https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`
-        );
-        if (!result.success || !result.data?.discord_user) throw new Error("Nessun dato");
-
-        const data = result.data;
-        const user = data.discord_user;
-        const states = {
-          online: ["Online", "#65dc91"],
-          idle: ["Assente", "#f3ca69"],
-          dnd: ["Non disturbare", "#ff7777"],
-          offline: ["Offline", "#909b92"]
-        };
-        const [label, color] = states[data.discord_status] || states.offline;
-
-        $("discord-name").textContent = user.global_name || user.username || "Discord";
-        $("discord-dot").style.backgroundColor = color;
-
-        const activity = (data.activities || []).find(item => item.type !== 4);
-        let detail = "Nessuna attività";
-        if (data.listening_to_spotify && data.spotify) {
-          detail = `♫ ${data.spotify.song} · ${data.spotify.artist}`;
-        } else if (activity) {
-          detail = [activity.name, activity.details || activity.state].filter(Boolean).join(" · ");
-        }
-
-        $("discord-activity").textContent = `${label} · ${detail}`;
-
-        const avatarUrl = /^[a-zA-Z0-9_]+$/.test(user.avatar || "")
-          ? `https://cdn.discordapp.com/avatars/${CONFIG.discord.userId}/${user.avatar}.png?size=80`
-          : fallbackAvatar;
-
-        loadImage($("discord-avatar"), avatarUrl, fallbackAvatar);
-        $("discord").hidden = false;
-      } catch {
-        // Nasconde anche dati precedenti: non mostra uno stato ormai obsoleto.
-        $("discord").hidden = true;
-      } finally {
-        discordBusy = false;
-      }
-    }
-
-    function syncDiscord() {
-      clearInterval(discordTimer);
-      if (!discordEnabled || document.hidden) return;
-      refreshDiscord();
-      discordTimer = setInterval(
-        refreshDiscord,
-        Math.max(15000, Number(CONFIG.discord.refreshMs) || 30000)
-      );
-    }
-
-    // Una GET per apertura pagina; nessun localStorage e nessun polling.
-    async function countVisit() {
-      $("visits").hidden = !fx.visitCounter;
-      if (!fx.visitCounter) return;
-
-      try {
-        const base = CONFIG.counter.endpoint.replace(/\/+$/, "");
-        const namespace = encodeURIComponent(CONFIG.counter.namespace);
-        const key = encodeURIComponent(CONFIG.counter.key);
-        const result = await getJSON(`${base}/${namespace}/view/${key}?readOnly=false`);
-        const count = Number(result.value);
-
-        if (!Number.isFinite(count) || count < 0) throw new Error("Contatore non valido");
-        $("visit-count").textContent = `${new Intl.NumberFormat("it-IT").format(count)} visite`;
-        $("visits").title = "Visualizzazioni complessive della pagina";
-      } catch {
-        $("visit-count").textContent = CONFIG.counter.fallback;
-      }
-    }
-
-    // Tilt solo su mouse/trackpad; nessuna intercettazione dei gesti touch.
-    $("profile").addEventListener("pointermove", event => {
-      if (!fx.tilt || reduced.matches || !finePointer.matches || event.pointerType === "touch") return;
-      const rect = $("profile").getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - .5;
-      const y = (event.clientY - rect.top) / rect.height - .5;
-      $("profile").style.setProperty("--rx", `${-y * 7}deg`);
-      $("profile").style.setProperty("--ry", `${x * 7}deg`);
-    });
-
-    function resetTilt() {
-      $("profile").style.setProperty("--rx", "0deg");
-      $("profile").style.setProperty("--ry", "0deg");
-    }
-
-    $("profile").addEventListener("pointerleave", resetTilt);
-    $("profile").addEventListener("focusin", resetTilt);
-
-    // Canvas leggero, DPR limitato e unico ciclo RAF per particelle/cursore.
-    const canvas = $("particles");
-    const context = canvas.getContext("2d");
-    let width = 0, height = 0, dots = [];
-    let frame = 0, previousTime = 0;
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0, visible: false };
-
-    function resizeCanvas() {
-      width = innerWidth;
-      height = innerHeight;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      context?.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const count = clamp(Number(fx.particleCount) || 0, 0, width < 600 ? 40 : 100);
-      dots = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 1.3 + .4,
-        speed: Math.random() * 13 + 5,
-        phase: Math.random() * Math.PI * 2
-      }));
-    }
-
-    function cursorEnabled() {
-      return fx.customCursor && finePointer.matches && !reduced.matches;
-    }
-
-    function hideCursor() {
-      pointer.visible = false;
-      $("cursor").style.opacity = "0";
-      $("cursor-trail").style.opacity = "0";
-      document.body.classList.remove("cursor-on");
-    }
-
-    document.addEventListener("pointermove", event => {
-      if (!cursorEnabled() || event.pointerType === "touch") return;
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      if (!pointer.visible) {
-        pointer.tx = pointer.x;
-        pointer.ty = pointer.y;
-      }
-      pointer.visible = true;
-      document.body.classList.add("cursor-on");
-    }, { passive: true });
-
-    document.documentElement.addEventListener("pointerleave", hideCursor);
-    window.addEventListener("blur", hideCursor);
-    window.addEventListener("resize", resizeCanvas, { passive: true });
-
-    function draw(time) {
-      frame = 0;
-      if (document.hidden || reduced.matches) return;
-      const delta = Math.min((time - (previousTime || time)) / 1000, .05);
-      previousTime = time;
-
-      if (fx.particles && context) {
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = accent;
-
-        for (const dot of dots) {
-          const snow = fx.particleStyle === "snow";
-          dot.y += dot.speed * delta * (snow ? 1.6 : .45);
-          dot.x += Math.sin(time / 2500 + dot.phase) * delta * (snow ? 9 : 2);
-          if (dot.y > height + 3) dot.y = -3;
-          if (dot.x < -3) dot.x = width + 3;
-          if (dot.x > width + 3) dot.x = -3;
-
-          context.globalAlpha = fx.particleStyle === "stars"
-            ? .18 + (Math.sin(time / 1400 + dot.phase) + 1) * .2
-            : .4;
-          context.beginPath();
-          context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-          context.fill();
-        }
-      }
-
-      if (cursorEnabled() && pointer.visible) {
-        pointer.tx += (pointer.x - pointer.tx) * .17;
-        pointer.ty += (pointer.y - pointer.ty) * .17;
-        $("cursor").style.transform = `translate3d(${pointer.x - 3.5}px,${pointer.y - 3.5}px,0)`;
-        $("cursor").style.opacity = "1";
-        $("cursor-trail").style.transform = `translate3d(${pointer.tx - 14.5}px,${pointer.ty - 14.5}px,0)`;
-        $("cursor-trail").style.opacity = fx.cursorTrail ? ".5" : "0";
-      }
-
-      if (fx.particles || cursorEnabled()) frame = requestAnimationFrame(draw);
-    }
-
-    function syncMotion() {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      previousTime = 0;
-      resetTilt();
-      hideCursor();
-      context?.clearRect(0, 0, width, height);
-      if (!document.hidden && !reduced.matches && (fx.particles || cursorEnabled())) {
-        frame = requestAnimationFrame(draw);
-      }
-      syncTyping();
-      syncBackgroundVideo();
-    }
-
-    // Titolo discreto; la preferenza di movimento ridotto viene rispettata.
-    const titles = [defaultTitle, `${CONFIG.username} · afterhours`, `${CONFIG.username} · ✦`];
-    let titleIndex = 0;
-    setInterval(() => {
-      if (!fx.animatedTitle || reduced.matches || document.hidden) return;
-      document.title = titles[++titleIndex % titles.length];
-    }, 2600);
-
-    reduced.addEventListener("change", () => {
-      document.title = defaultTitle;
-      syncMotion();
-    });
-    finePointer.addEventListener("change", syncMotion);
-    document.addEventListener("visibilitychange", () => {
-      syncMotion();
-      syncDiscord();
-      if (document.hidden) document.title = defaultTitle;
-    });
-
-    resizeCanvas();
-    syncMotion();
-    syncDiscord();
-    countVisit();
-  </script>
+                <div class="visitor-counter">
+                    <svg class="visitor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <span id="visitor-count">21234</span>
+                    <span class="tooltip">Profile Views</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="skills-block" class="hidden">
+            <h2 class="skills-title">Programming Skills</h2>
+            <div class="skill">
+                <div class="skill-name">
+                    <img src="assets/python.png" alt="Python" class="skill-icon">
+                    <span>Python</span>
+                    <span>87%</span>
+                </div>
+                <div class="skill-bar-container">
+                    <div id="python-bar" class="skill-bar"></div>
+                </div>
+            </div>
+            <div class="skill">
+                <div class="skill-name">
+                    <img src="assets/cpp.png" alt="C++" class="skill-icon">
+                    <span>C++</span>
+                    <span>75%</span>
+                </div>
+                <div class="skill-bar-container">
+                    <div id="cpp-bar" class="skill-bar"></div>
+                </div>
+            </div>
+            <div class="skill">
+                <div class="skill-name">
+                    <img src="assets/csharp.png" alt="C#" class="skill-icon">
+                    <span>C#</span>
+                    <span>80%</span>
+                </div>
+                <div class="skill-bar-container">
+                    <div id="csharp-bar" class="skill-bar"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="results-button-container" class="hidden">
+            <button id="results-theme">View Results</button>
+            <div id="results-hint" class="hidden">Click again to return to profile</div>
+        </div>
+
+
+        <div class="controls">
+            <div id="home-theme" class="theme-button">1</div>
+            <div id="hacker-theme" class="theme-button">2</div>
+            <div id="rain-theme" class="theme-button">3</div>
+            <div id="anime-theme" class="theme-button">4</div>
+            <div id="car-theme" class="theme-button">5</div>
+        </div>
+
+
+        <div class="top-controls">
+            <div class="volume-control">
+                <svg id="volume-icon" class="volume-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+                <input id="volume-slider" class="slider" type="range" min="0" max="1" step="0.01" value="0.3">
+            </div>
+            <div class="transparency-control">
+                <svg class="transparency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <input id="transparency-slider" class="slider" type="range" min="0" max="1" step="0.01" value="0.7">
+            </div>
+        </div>
+    </div>
+
+
+    <audio id="background-music" loop>
+        <source src="assets/background_music.mp3" type="audio/mp3">
+    </audio>
+    <audio id="hacker-music" loop muted>
+        <source src="assets/hacker_music.mp3" type="audio/mp3">
+    </audio>
+    <audio id="rain-music" loop muted>
+        <source src="assets/rain_music.mp3" type="audio/mp3">
+    </audio>
+    <audio id="anime-music" loop muted>
+        <source src="assets/anime_music.mp3" type="audio/mp3">
+    </audio>
+    <audio id="car-music" loop muted>
+        <source src="assets/car_music.mp3" type="audio/mp3">
+    </audio>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+
+    <script src="script.js"></script>
 </body>
 </html>
