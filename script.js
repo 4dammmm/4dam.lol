@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  const startMessage = "song by @env0y1111 on yt, click anywhere! :3";
+  const startMessage = "BASTA!!!!";
   let startTextContent = '';
   let startIndex = 0;
   let startCursorVisible = true;
@@ -202,12 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   const bioMessages = [
-    "I'm an atheist! :D",
-    "I like cats! :D",
-	"English is my second language! :D",
-	"My irl name is Max! :D",
-	"If you're homophobic then block me you fuckin retard! :D",
-	"Never lose your \":D\"!"
+    "Ciao Dish.",
+    "odio i negri",
+	"Pro ai diritti delle donne (6'feet BTW)"
   ];
   let bioText = '';
   let bioIndex = 0;
