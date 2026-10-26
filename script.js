@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  const name = "IceCream Cat";
+  const name = "thereal4dam";
   let nameText = '';
   let nameIndex = 0;
   let isNameDeleting = false;
